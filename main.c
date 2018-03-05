@@ -1,9 +1,61 @@
+// =============================================================================
+// ======================== INCLUDES ===========================================
+// =============================================================================
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
+// =============================================================================
+// ======================== MACRO & CONSTANTS ==================================
+// =============================================================================
+
+// difference between uppercase and lower case letters
 #define SHIFT_VAL   ('a'-'A')
 
+// ---------------------------------------------------------------------------------------------------
+
+// String used for bit shifting character function
+const char input_table[] = "I think you know my point about inline if operations : it only obfuscates the code.\n";
+const char bit_shifted_char_table[] =
+{
+    0x92, 0x40, 0xe8, 0xd0, 0xd2, 0xdc, 0xd6, 0x40, 0xf2, 0xde, 0xea, 0x40, 0xd6, 0xdc, 0xde, 0xee, 0x40, 0xda, 0xf2,
+    0x40, 0xe0, 0xde, 0xd2, 0xdc, 0xe8, 0x40, 0xc2, 0xc4, 0xde, 0xea, 0xe8, 0x40, 0xd2, 0xdc, 0xd8, 0xd2, 0xdc, 0xca,
+    0x40, 0xd2, 0xcc, 0x40, 0xde, 0xe0, 0xca, 0xe4, 0xc2, 0xe8, 0xd2, 0xde, 0xdc, 0xe6, 0x40, 0x74, 0x40, 0xd2, 0xe8,
+    0x40, 0xde, 0xdc, 0xd8, 0xf2, 0x40, 0xde, 0xc4, 0xcc, 0xea, 0xe6, 0xc6, 0xc2, 0xe8, 0xca, 0xe6, 0x40, 0xe8, 0xd0,
+    0xca, 0x40, 0xc6, 0xde, 0xc8, 0xca, 0x5c
+};
+
+// ---------------------------------------------------------------------------------------------------
+
+// vowels and consonants tables
+const char vowels[] = { 'a', 'e', 'i', 'o', 'u', 'y' };
+const char consonants[] = { 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z' };
+// test message string for character manipulation
+const char mesage_str[] = "i think you know my point about inline if operations : it only obfuscates the code.";
+
+
+// =============================================================================
+// ======================== PROTOTYPES =========================================
+// =============================================================================
+
+bool is_a_vowel( char letter_to_analyse );
+int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, int *p_offset );
+
+// =============================================================================
+// ======================== FUNCTIONS ==========================================
+// =============================================================================
+
+/*
+ * First example of string obfuscation : Shift letters from upper case to lower case
+ * and the other way around.
+ * Does not really obfuscate anything.
+ */
+
+/**
+  * @brief shift letters from upper case to lower case or from lower case to upper case
+  */
 void shift_letters( void )
 {
     // declare variable
@@ -43,17 +95,17 @@ void shift_letters( void )
     printf( user_input );
 }
 
-const char input_table[] = "I think you know my point about inline if operations : it only obfuscates the code.\n";
-const char bit_shifted_char_table[] =
-{
-    0x92, 0x40, 0xe8, 0xd0, 0xd2, 0xdc, 0xd6, 0x40, 0xf2, 0xde, 0xea, 0x40, 0xd6, 0xdc, 0xde, 0xee, 0x40, 0xda, 0xf2,
-    0x40, 0xe0, 0xde, 0xd2, 0xdc, 0xe8, 0x40, 0xc2, 0xc4, 0xde, 0xea, 0xe8, 0x40, 0xd2, 0xdc, 0xd8, 0xd2, 0xdc, 0xca,
-    0x40, 0xd2, 0xcc, 0x40, 0xde, 0xe0, 0xca, 0xe4, 0xc2, 0xe8, 0xd2, 0xde, 0xdc, 0xe6, 0x40, 0x74, 0x40, 0xd2, 0xe8,
-    0x40, 0xde, 0xdc, 0xd8, 0xf2, 0x40, 0xde, 0xc4, 0xcc, 0xea, 0xe6, 0xc6, 0xc2, 0xe8, 0xca, 0xe6, 0x40, 0xe8, 0xd0,
-    0xca, 0x40, 0xc6, 0xde, 0xc8, 0xca, 0x5c
-};
+// ---------------------------------------------------------------------------------------------------
 
-int character_bit_shifting( )
+/*
+ * Second example of string obfuscation : bit shift character in the ASCII table
+ * Makes it completely unreadable but, can be a problem when trying to decode it because of the format.
+ */
+
+/**
+  * @brief Bit shifts a string of character to make it unreadable
+  */
+void character_bit_shifting( void )
 {
     // variable init
     int i = 0;
@@ -77,16 +129,18 @@ int character_bit_shifting( )
     }
 
     printf("\n");
-
-    return 0;
 }
 
-const char vowels[] = { 'a', 'e', 'i', 'o', 'u', 'y' };
-const char consonants[] = { 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z' };
+// ---------------------------------------------------------------------------------------------------
 
-const char mesage_str[] = "i think you know my point about inline if operations : it only obfuscates the code.";
-
-char calculate_vowel_translation( char vowel )
+/**
+  * @brief calculate the translation of a vowel into consonant
+  * @param [in] vowel         vowel character to translate into consonant character
+  * @param [out] p_outbuffer  pointer onto output buffer
+  * @param [out] p_offset     pointer onto offset value to set
+  * @return 0 if OK ; -1 if failure
+  */
+int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, int *p_offset )
 {
     // declare and init variables
     unsigned char upper_half = '#';
@@ -94,42 +148,78 @@ char calculate_vowel_translation( char vowel )
 
     // determine value of upper_half
     upper_half = ( vowel >> 4 ) & 0x0F;
-    if( upper_half & 0x06 )
+    /*
+     * Lower case letter values should be between 0x61 and 0x7A
+     * => upper half byte can only be 0x6 or 0x7
+     */
+    if( ( upper_half & 0x06 ) || ( upper_half & 0x07 ) )
     {
-        upper_half = 0x06
-    }
-    else if( upper_half & 0x07 )
-    {
-        upper_half = 0x07
+        // success => nothing to do
     }
     else
     {
-        // failure case...
-        //! @todo need to specify what to do in this case
+        // failure case... exit with error...
+        return -1;
     }
 
-    //! @
+    // determine value of lower_half
+    lower_half = vowel & 0x0F;
 
-    return result;
+    // set the values of translation into output buffer
+    *p_out_buffer = 0x40 & upper_half;
+    *(p_out_buffer + 1) = 0x40 & lower_half;
+    *p_offset += 2; // update offset value
+
+    return 0;
+}
+
+/**
+  * @brief Tells if the character given in argument is a vowel or not
+  * @param [in] letter_to_analyse  character that we will tell if its a vowel or not
+  * @return true  : letter_to_analyse is a vowel
+  *         false : letter_to_analyse is a consonant
+  */
+bool is_a_vowel( char letter_to_analyse )
+{
+    int i = 0;
+    // loop that parses the vowel table
+    for( i = 0 ; i < sizeof(vowels) ; i++ )
+    {
+        // check that letter_to_analyse is value is the same as one in vowels[] table
+        if( vowels[i] == letter_to_analyse )
+        {
+            // comparison success => vowel found => exit with true
+            return true;
+        }
+    }
+
+    // if we reach this point, then all comparisons failed and letter is not a vowel => exit with false
+    return false;
 }
 
 int main( )
 {
     // local variable init
     int i = 0;
+    int offset = 0;
     unsigned char output_buff[ 256 ];
     // buffer init
     memset( output_buff, 0x00, sizeof(output_buff) );
 
-    // translation
+    // translation loop
     for( i = 0 ; i < sizeof(mesage_str) ; i++ )
     {
-        if( is_a_vowel( mesage_str[ i ] ) )
+        if( is_a_vowel( mesage_str[ i ] ) ) // check if letter is a vowel
         {
-            output_buff[ i ] =
+            calculate_vowel_translation( mesage_str[ i ], &output_buff[ offset ], &offset );
+        }
+        else
+        {
+            //! @todo Work In Progress ...
         }
     }
 
+    // print linebreak to have next shell command on a new line
     printf("\n");
     return 0;
 }
