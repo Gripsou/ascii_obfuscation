@@ -54,7 +54,7 @@ int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, int *p
  */
 
 /**
-  * @brief shift letters from upper case to lower case or from lower case to upper case
+  * @brief Shift letters from upper case to lower case or from lower case to upper case
   */
 void shift_letters( void )
 {
@@ -134,11 +134,13 @@ void character_bit_shifting( void )
 // ---------------------------------------------------------------------------------------------------
 
 /**
-  * @brief calculate the translation of a vowel into consonant
-  * @param [in] vowel         vowel character to translate into consonant character
-  * @param [out] p_outbuffer  pointer onto output buffer
-  * @param [out] p_offset     pointer onto offset value to set
-  * @return 0 if OK ; -1 if failure
+  * @brief Calculate the translation of a vowel into consonant
+  * @param [in] vowel          Vowel character to translate into consonant character
+  * @param [out] p_out_buffer  Pointer onto output buffer
+  * @param [out] p_offset      Pointer onto offset value to set
+  * @return An error value :<br>
+  *         - 0 if OK <br>
+  *         - (-1) if failure
   */
 int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, int *p_offset )
 {
@@ -175,9 +177,10 @@ int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, int *p
 
 /**
   * @brief Tells if the character given in argument is a vowel or not
-  * @param [in] letter_to_analyse  character that we will tell if its a vowel or not
-  * @return true  : letter_to_analyse is a vowel
-  *         false : letter_to_analyse is a consonant
+  * @param [in] letter_to_analyse  Character that we will tell if its a vowel or not
+  * @return A boolean value :<br>
+  *         - true  : letter_to_analyse is a vowel <br>
+  *         - false : letter_to_analyse is a consonant
   */
 bool is_a_vowel( char letter_to_analyse )
 {
@@ -197,7 +200,10 @@ bool is_a_vowel( char letter_to_analyse )
     return false;
 }
 
-int main( )
+/**
+  * @brief Main program function
+  */
+int main( void )
 {
     // local variable init
     int i = 0;
