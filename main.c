@@ -1,33 +1,22 @@
-// =============================================================================
-// ======================== INCLUDES ===========================================
-// =============================================================================
+// ============================================================================
+// ======================== INCLUDES ==========================================
+// ============================================================================
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 
-// =============================================================================
-// ======================== MACRO & CONSTANTS ==================================
-// =============================================================================
+// ============================================================================
+// ======================== MACRO & CONSTANTS =================================
+// ============================================================================
 
 // difference between uppercase and lower case letters
 #define SHIFT_VAL   ('a'-'A')
 
-// ---------------------------------------------------------------------------------------------------
-
-// String used for bit shifting character function
-const char input_table[] = "I think you know my point about inline if operations : it only obfuscates the code.\n";
-const char bit_shifted_char_table[] =
-{
-    0x92, 0x40, 0xe8, 0xd0, 0xd2, 0xdc, 0xd6, 0x40, 0xf2, 0xde, 0xea, 0x40, 0xd6, 0xdc, 0xde, 0xee, 0x40, 0xda, 0xf2,
-    0x40, 0xe0, 0xde, 0xd2, 0xdc, 0xe8, 0x40, 0xc2, 0xc4, 0xde, 0xea, 0xe8, 0x40, 0xd2, 0xdc, 0xd8, 0xd2, 0xdc, 0xca,
-    0x40, 0xd2, 0xcc, 0x40, 0xde, 0xe0, 0xca, 0xe4, 0xc2, 0xe8, 0xd2, 0xde, 0xdc, 0xe6, 0x40, 0x74, 0x40, 0xd2, 0xe8,
-    0x40, 0xde, 0xdc, 0xd8, 0xf2, 0x40, 0xde, 0xc4, 0xcc, 0xea, 0xe6, 0xc6, 0xc2, 0xe8, 0xca, 0xe6, 0x40, 0xe8, 0xd0,
-    0xca, 0x40, 0xc6, 0xde, 0xc8, 0xca, 0x5c
-};
-
-// ---------------------------------------------------------------------------------------------------
+// Stupid macro definition
+#define ever        (;;)
+#define forever     for ever
 
 // vowels and consonants tables
 const char vowels[] = { 'a', 'e', 'i', 'o', 'u', 'y' };
@@ -35,103 +24,16 @@ const char consonants[] = { 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n
 // test message string for character manipulation
 const char mesage_str[] = "i think you know my point about inline if operations : it only obfuscates the code.";
 
-
-// =============================================================================
-// ======================== PROTOTYPES =========================================
-// =============================================================================
+// ============================================================================
+// ======================== PROTOTYPES ========================================
+// ============================================================================
 
 bool is_a_vowel( char letter_to_analyse );
 int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, int *p_offset );
 
-// =============================================================================
-// ======================== FUNCTIONS ==========================================
-// =============================================================================
-
-/*
- * First example of string obfuscation : Shift letters from upper case to lower case
- * and the other way around.
- * Does not really obfuscate anything.
- */
-
-/**
-  * @brief Shift letters from upper case to lower case or from lower case to upper case
-  */
-void shift_letters( void )
-{
-    // declare variable
-    int i = 0;
-    char user_input[ 256 ];
-    // initialize buffer
-    memset( user_input, 0x00, sizeof(user_input) );
-    // init is finished, say hello
-    printf( "Hello world!\n" );
-    // Ask user for a string
-    printf( "Please enter a sentence :\n> " );
-    scanf( "%s", user_input );
-    // for loop to shift value of characters
-    for( i = 0 ; ( i < sizeof(user_input) ) && ( user_input[i] != 0x00 ) ; i++ )
-    {
-        if( ( user_input[ i ] >= 'a' ) && ( user_input[ i ] <= 'z' ) )
-        {
-            user_input[ i ] = user_input[ i ] - SHIFT_VAL;
-        }
-        else if( ( user_input[ i ] >= 'A' ) && ( user_input[ i ] <= 'Z' ) )
-        {
-            user_input[ i ] = user_input[ i ] + SHIFT_VAL;
-        }
-        else
-        {
-            user_input[ i ] = '~';
-        }
-    }
-
-    // if max size is not reached, then add '\n'
-    if( i < sizeof(user_input) )
-    {
-        user_input[ i ] = '\n';
-    }
-
-    // print the result
-    printf( user_input );
-}
-
-// ---------------------------------------------------------------------------------------------------
-
-/*
- * Second example of string obfuscation : bit shift character in the ASCII table
- * Makes it completely unreadable but, can be a problem when trying to decode it because of the format.
- */
-
-/**
-  * @brief Bit shifts a string of character to make it unreadable
-  */
-void character_bit_shifting( void )
-{
-    // variable init
-    int i = 0;
-    unsigned char output_table[ sizeof(input_table) ];
-    // init buffer
-    memset( output_table, 0x00, sizeof(output_table) );
-    // print input table
-    printf( input_table );
-    // shift all bytes of the string by one bit
-    for( i = 0 ; i < sizeof(output_table) ; i++ )
-    {
-        output_table[ i ] = (unsigned char)input_table[ i ] << 1;
-    }
-
-    // print input table after bit-shifting
-    printf( (char *)output_table );
-    printf( "\n" );
-    for( i = 0 ; i < sizeof(output_table) ; i++ )
-    {
-        printf( "0x%02x ", (unsigned char)output_table[ i ] );
-    }
-
-    printf("\n");
-}
-
-// ---------------------------------------------------------------------------------------------------
+// ============================================================================
+// ======================== FUNCTIONS =========================================
+// ============================================================================
 
 /**
   * @brief Calculate the translation of a vowel into consonant
@@ -201,30 +103,75 @@ bool is_a_vowel( char letter_to_analyse )
 }
 
 /**
-  * @brief Main program function
+  * @brief Translation loop function
+  * @param [in] input    String that contains the original message
+  * @param [out] output  Buffer in which we would write the resulting string
+  * @return An int value :<br>
+  *           - 0 if everything is OK <br>
+  *           - (-1) if process ends in error
   */
-int main( void )
+int translate_into_obscure( char *input, unsigned char *output )
 {
     // local variable init
     int i = 0;
     int offset = 0;
-    unsigned char output_buff[ 256 ];
-    // buffer init
-    memset( output_buff, 0x00, sizeof(output_buff) );
 
     // translation loop
     for( i = 0 ; i < sizeof(mesage_str) ; i++ )
     {
         if( is_a_vowel( mesage_str[ i ] ) ) // check if letter is a vowel
         {
-            calculate_vowel_translation( mesage_str[ i ], &output_buff[ offset ], &offset );
+            calculate_vowel_translation( mesage_str[ i ], &output[ offset ], &offset );
         }
         else
         {
-            //! @todo Work In Progress ...
+            //! @todo Work In Progress : calculate consonant translation
         }
     }
 
+    return 0;
+}
+
+/**
+  * @brief Main program function
+  */
+int main( int argC, char **argV )
+{
+    unsigned char output_buff[ 256 ];
+    // buffer init
+    memset( output_buff, 0x00, sizeof(output_buff) );
+
+    /**
+      * @todo Work in Progress : Add conditionnal fork:
+      *         - if there are arguments in the program call, just translates
+      *           the input string and exit (or print error message)
+      *         - if there is no argument, go to the infinite loop to use the
+      *           program until asked to quit
+      */
+    if( argC > 0 )
+    {
+        // translate input string
+        printf( "%s\n", argV[ 0 ] );  //! @remark print which option has been chosen (encode or decode) (this line is only here for debug)
+        printf( "%s\n", argV[ 1 ] );  //! @remark just print the input string for now (translation part of the program is not finished)
+
+        // jump to end of programm
+        goto exit_program;
+    }
+
+
+    // forever loop
+    forever
+    {
+        printf( "Exit [yes/no] ? " );
+        memset( output_buff, 0x00, sizeof(output_buff) );
+        scanf( "%s", (char *)output_buff );
+        if( strncmp( (const char *)output_buff, "yes", strlen("yes") ) == 0 )
+        {
+            break;
+        }
+    }
+
+exit_program:
     // print linebreak to have next shell command on a new line
     printf("\n");
     return 0;

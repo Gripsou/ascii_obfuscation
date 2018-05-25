@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1527263559 source:c:\users\vricchi\documents\vincricc\kraken\ascii_obfuscation\deprecated_cunctions.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"deprecated_functions.h"
+
+1527263822 c:\users\vricchi\documents\vincricc\kraken\ascii_obfuscation\deprecated_functions.h
+
+1527267878 source:c:\users\vricchi\documents\vincricc\kraken\ascii_obfuscation\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+
