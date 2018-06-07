@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+//! @note it might be of use to add the following line
+// #include <windows.h>
 
 // ============================================================================
 // ======================== MACRO & CONSTANTS =================================
@@ -157,7 +159,6 @@ int main( int argC, char **argV )
         // jump to end of programm
         goto exit_program;
     }
-
 
     // forever loop
     forever
