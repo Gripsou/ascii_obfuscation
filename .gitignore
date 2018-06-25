@@ -1,5 +1,6 @@
 bin/*
 obj/*
-documentation/*
+documentation/latex/*
+documentation/html/*
 *.out
 *.layout
