@@ -262,6 +262,4 @@ A return statement should never be hidden into a Macro <br>
 	} while( 0 )
 ```
 
-<div>
-
 [Back to Home page](../../README.md)
