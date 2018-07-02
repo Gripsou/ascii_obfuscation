@@ -205,6 +205,17 @@ if( integer_condition > 0 )		// this is right
 ```if( a_condition == CONSTANT_VALUE )```. If a ```=``` character has been forgotten, the compiler will complain about
 it (cannot affect value to a constant value).
 
+* If there is kind of operation that are involved in a condition, it should be surrounded by parenthesis to avoid
+evaluating the expressions with an unexpected priority.
+
+```c
+if( idx & ~0xC0FFEEUL != idx )
+```
+
+In previous example, we suppose that the precedence is to do `idx & ~0xC0FFEEUL` and then compare the result to `idx`.
+But that depends on the compiler. Precedence could be as well to evaluate `~0xC0FFEEUL != idx` before doing the binary
+`&` operation between the result and `idx`.
+
 
 INLINE IF operations
 --------------------
@@ -247,8 +258,7 @@ GOTO statement
 RETURN statement
 ----------------
 
-A return statement should never be hidden into a Macro <br>
-=> it fucks up your mind if you read the code and can't see explicitly all exit points of a function.
+A return statement should never be hidden into a Macro
 
 ```c
 #define DEVICE_CHECK( device, index ) 						\
@@ -260,6 +270,59 @@ A return statement should never be hidden into a Macro <br>
 			return;											\
 		}													\
 	} while( 0 )
+	
+void create_device_counter( void *p_device ) 
+{
+	int retcode = ERROR_NONE;
+	unsigned int counter_nb = 0xFFUL;	//< Default value : No counter
+	DeviceCounter_t device_cnt = *p_device;
+	
+	CHECK_DEVICE( device, DEV_ALLOW_INDEX );
+
+	retcode = set_device_counter( device_cnt, &counter_nb );
+
+	if( retcode == ERROR_NONE )
+	{
+		printf( "Counter no. 0x%02x is set for device %s\n", counter_nb, device_cnt.name );
+	}
+
+	printf( "Exit status is %d\n" , retcode );
+}
 ```
+
+For this example, I have put both macro definition and the function that uses it close oe to the other. But, what if
+the macro is defined in some obscure ```<utils.h>``` header file. Furthermore, what if it is defined in a compiled
+library ? 
+
+It fucks up your mind if you read the code and can't see explicitly all exit points of a function.
+
+**Note :** In code sample above, using `do{ /* some code */} while( 0 )` inside of the macro forces to add `;` when using it.
+
+
+Comments
+--------
+
+* One line comments must use `// ... ` style. It is defined since _C99_, that's long enough for it to be standard.
+* Multi-line comment must follow the style :
+
+```c
+/*
+ * Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.
+ * Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.
+ */
+```
+
+* _Doxygen_ or any other documentational comments should use `//! ... ` for one line comments and
+
+```
+/**
+  * @brief Cras elementum ultrices diam.
+  * @details Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, 
+  *          orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat.
+  */
+```
+
+for multi line comments.
+
 
 [Back to Home page](../../README.md)
