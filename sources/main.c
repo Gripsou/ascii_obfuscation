@@ -6,8 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//! @note it might be of use to add the following line
-// #include <windows.h>
+#ifdef __unix__
+    #include <unistd.h>
+#else
+    #include <windows.h>
+#endif // __unix__
 
 // ============================================================================
 // ======================== MACRO & CONSTANTS =================================
@@ -18,7 +21,7 @@
 
 // Stupid macro definition
 #define ever        (;;)
-#define forever     for ever
+#define forever     for ever    //! equivalent to for(;;)... I thought it would be fun, but it's still very stupid
 
 // vowels and consonants tables
 const char vowels[] = { 'a', 'e', 'i', 'o', 'u', 'y' };
@@ -118,12 +121,18 @@ int translate_into_obscure( char *input, unsigned char *output )
     int i = 0;
     int offset = 0;
 
-    // translation loop
-    for( i = 0 ; i < sizeof(mesage_str) ; i++ )
+    // check input
+    if( NULL == input )
     {
-        if( is_a_vowel( mesage_str[ i ] ) ) // check if letter is a vowel
+        input = (char *)mesage_str;
+    }
+
+    // translation loop
+    for( i = 0 ; ( i < sizeof(mesage_str) ) && ( input[i] != '\0' ) ; i++ )
+    {
+        if( is_a_vowel( input[ i ] ) ) // check if letter is a vowel
         {
-            calculate_vowel_translation( mesage_str[ i ], &output[ offset ], &offset );
+            calculate_vowel_translation( input[ i ], &output[ offset ], &offset );
         }
         else
         {
@@ -139,30 +148,52 @@ int translate_into_obscure( char *input, unsigned char *output )
   */
 int main( int argC, char **argV )
 {
+    char input_buff[ 256 ];    // used to store user input when no argument are passed to program
     unsigned char output_buff[ 256 ];
+
     // buffer init
+    memset( input_buff, 0x00, sizeof(input_buff) );
     memset( output_buff, 0x00, sizeof(output_buff) );
 
     /**
-      * @todo Work in Progress : Add conditionnal fork:
+      * @todo Work in Progress : Add conditional fork:
       *         - if there are arguments in the program call, just translates
       *           the input string and exit (or print error message)
       *         - if there is no argument, go to the infinite loop to use the
       *           program until asked to quit
       */
-    if( argC > 0 )
+    if( argC > 1 )
     {
         // translate input string
         printf( "%s\n", argV[ 0 ] );  //! @remark print which option has been chosen (encode or decode) (this line is only here for debug)
         printf( "%s\n", argV[ 1 ] );  //! @remark just print the input string for now (translation part of the program is not finished)
 
-        // jump to end of programm
-        goto exit_program;
+        /**
+          * @todo Add call to string obfuscation functions here
+          * @details pilou pilou... work is in progress
+          *          I do whatever I want to since it's my project :p
+          */
+
+        //! @todo Remove following line after debug
+#ifdef __unix__
+        pause();
+#else
+        system("PAUSE");
+#endif
+
+        // Jump to end of program
+        goto exit_program;  //! @todo remove goto ASAP => goes against coding style
     }
 
     // forever loop
     forever
     {
+        // Prompt user for input string
+        printf( ":> " );
+        scanf( "%s", input_buff );
+        translate_into_obscure( input_buff, output_buff );
+
+        // Prompt user for continuation or exit
         printf( "Exit [yes/no] ? " );
         memset( output_buff, 0x00, sizeof(output_buff) );
         scanf( "%s", (char *)output_buff );
