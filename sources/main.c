@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <iso646.h>  // allows to use 'and', 'or', 'xor' keywords instead of '&&', '||' symbols
 #ifdef __unix__
     #include <unistd.h>
 #else
@@ -35,6 +36,7 @@ const char mesage_str[] = "i think you know my point about inline if operations 
 
 bool is_a_vowel( char letter_to_analyse );
 int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, int *p_offset );
+int calculate_consonant_translation( char consonant, unsigned char *p_out_buffer, int *p_offset );
 
 // ============================================================================
 // ======================== FUNCTIONS =========================================
@@ -83,6 +85,21 @@ int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, int *p
 }
 
 /**
+  * @brief Calculate the translation of a consonant into another one
+  * @param [in] consonant      Vowel consonant character to translate
+  * @param [out] p_out_buffer  Pointer onto output buffer
+  * @param [out] p_offset      Pointer onto offset value to set
+  * @return An error value :<br>
+  *         - 0 if OK <br>
+  *         - (-1) if failure
+  */
+int calculate_consonant_translation( char consonant, unsigned char *p_out_buffer, int *p_offset )
+{
+    //! @todo Work in progress => always fail in the meantime
+    return -1;
+}
+
+/**
   * @brief Tells if the character given in argument is a vowel or not
   * @param [in] letter_to_analyse  Character that we will tell if its a vowel or not
   * @return A boolean value :<br>
@@ -103,7 +120,10 @@ bool is_a_vowel( char letter_to_analyse )
         }
     }
 
-    // if we reach this point, then all comparisons failed and letter is not a vowel => exit with false
+    /*
+     * if we reach this point, then all comparisons failed and letter is not a vowel
+     * => exit with false
+     */
     return false;
 }
 
@@ -136,7 +156,7 @@ int translate_into_obscure( char *input, unsigned char *output )
         }
         else
         {
-            //! @todo Work In Progress : calculate consonant translation
+            calculate_consonant_translation( input[ i ], &output[ offset ], &offset );
         }
     }
 
@@ -156,23 +176,22 @@ int main( int argC, char **argV )
     memset( output_buff, 0x00, sizeof(output_buff) );
 
     /**
-      * @todo Work in Progress : Add conditional fork:
-      *         - if there are arguments in the program call, just translates
-      *           the input string and exit (or print error message)
-      *         - if there is no argument, go to the infinite loop to use the
-      *           program until asked to quit
+      * Conditional behavior of program:
+      *   - if there are arguments in the program call, just translates
+      *     the input string and exit (or print error message)
+      *   - if there is no argument, go to the infinite loop to use the
+      *     program until asked to quit
       */
     if( argC > 1 )
     {
         // translate input string
-        printf( "%s\n", argV[ 0 ] );  //! @remark print which option has been chosen (encode or decode) (this line is only here for debug)
-        printf( "%s\n", argV[ 1 ] );  //! @remark just print the input string for now (translation part of the program is not finished)
+        //! @remark print which option has been chosen (encode or decode) (following line is only here for debug)
+        printf( "%s\n", argV[ 0 ] );
+        //! @remark just print the input string for now (translation part of the program is not finished yet)
+        printf( "%s\n", argV[ 1 ] );
 
-        /**
-          * @todo Add call to string obfuscation functions here
-          * @details pilou pilou... work is in progress
-          *          I do whatever I want to since it's my project :p
-          */
+        // Call to string obfuscation function
+        translate_into_obscure( argV[ 1 ], output_buff);
 
         //! @todo Remove following line after debug
 #ifdef __unix__
