@@ -1,7 +1,16 @@
+# Exclude from git repository object and binary files
 bin/*
 obj/*
 project/obj/*
-documentation/pdf/*
-!/documentation/pdf/*.pdf
+project/*/obj/*
+cmake-build-debug/*
+
+# Exclude IDE layout and user specific files
 *.out
 *.layout
+*.depend
+.idea
+
+# Exclude all files used to generate pdf documentation, except pdf file itself
+documentation/pdf/*
+!/documentation/pdf/*.pdf
