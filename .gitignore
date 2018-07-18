@@ -1,7 +1,9 @@
 bin/*
 obj/*
 project/obj/*
+project/*/obj/*
 documentation/pdf/*
 !/documentation/pdf/*.pdf
 *.out
 *.layout
+*.depend
