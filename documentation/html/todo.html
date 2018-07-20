@@ -103,14 +103,16 @@ $(document).ready(function(){initNavTree('todo.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="reflist">
-<dt><a class="anchor" id="_todo000002"></a>Global <a class="el" href="main_8c.html#a58d1da195babd0dc18b88b3c872f1513">main</a>  (int argC, char **argV)</dt>
-<dd>Work in Progress : Add conditionnal fork:<ul>
-<li>if there are arguments in the program call, just translates the input string and exit (or print error message)</li>
-<li>if there is no argument, go to the infinite loop to use the program until asked to quit  </li>
-</ul>
+<dt><a class="anchor" id="_todo000002"></a>Global <a class="el" href="main_8c.html#adc52dfcca10e6e16e16a6120c8a9d587">calculate_consonant_translation</a>  (char consonant, unsigned char *p_out_buffer, unsigned int *p_offset)</dt>
+<dd>look for a workaround for this case  </dd>
+<dt><a class="anchor" id="_todo000001"></a>Global <a class="el" href="main_8c.html#a7df6d697f541b8ab5c5de0c1a1cd00cb">calculate_vowel_translation</a>  (char vowel, unsigned char *p_out_buffer, unsigned int *p_offset)</dt>
+<dd>look for a workaround for this case  </dd>
+<dt><a class="anchor" id="_todo000003"></a>Global <a class="el" href="main_8c.html#a58d1da195babd0dc18b88b3c872f1513">main</a>  (int argC, char **argV)</dt>
+<dd><p class="startdd">Add a check on return code for 'translate_into_obscure' function (and take action depending on it) </p>
+<p>Remove following lines after debug </p>
+<p>remove 'goto' ASAP =&gt; goes against coding style </p>
+<p class="enddd">rework following lines : coding style chosen is not to have 1 exit point per function &amp; forbids 'goto' usage </p>
 </dd>
-<dt><a class="anchor" id="_todo000001"></a>Global <a class="el" href="main_8c.html#ad71088eef48932bc62ae23031fd0ea4a">translate_into_obscure</a>  (char *input, unsigned char *output)</dt>
-<dd>Work In Progress : calculate consonant translation </dd>
 </dl>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
