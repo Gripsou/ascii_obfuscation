@@ -39,6 +39,13 @@
 #define ever        (;;)
 #define forever     for ever    //! equivalent to for(;;)... I thought it would be fun, but it's still very stupid
 
+// Define error codes to avoid using magic numbers
+enum error_codes
+{
+    GENERIC_ERROR   = -1,
+    RETURN_OK       = 0,
+};
+
 // vowels and consonants tables
 const char vowels[] = { 'a', 'e', 'i', 'o', 'u', 'y' };
 const char consonants[] = { 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z' };
@@ -50,7 +57,7 @@ const char title_str[] = \
     " _/    _/  _/_/      _/        _/  _/      _/    _/  _/    _/  _/_/_/_/  _/    _/  _/_/      _/        _/    _/    _/      _/  _/    _/  _/    _/\n"
     "_/    _/      _/_/  _/        _/  _/      _/    _/  _/    _/    _/      _/    _/      _/_/  _/        _/    _/    _/      _/  _/    _/  _/    _/ \n"
     " _/_/_/  _/_/_/      _/_/_/  _/  _/        _/_/    _/_/_/      _/        _/_/_/  _/_/_/      _/_/_/    _/_/_/      _/_/  _/    _/_/    _/    _/  \n"
-    "                                  _/_/_/_/                                                                                                         ";
+    "                                  _/_/_/_/                                                                                                       \n";
 
 // ============================================================================
 // ======================== PROTOTYPES ========================================
@@ -70,15 +77,15 @@ int calculate_consonant_translation( char consonant, unsigned char *p_out_buffer
   * @param [in] character_to_shift   Character to shift
   * @param [out] p_result_character  Pointer onto resulting character
   * @return An int error code value :<br>
-  *         - 0 if OK <br>
-  *         - (-1) if failure
+  *         - RETURN_OK (0) if OK <br>
+  *         - GENERIC_ERROR (-1) if failure
   */
 int shift_letter( char character_to_shift, char *p_result_character )
 {
     // check that there is a value to set
     if( NULL == p_result_character )
     {
-        return -1;
+        return GENERIC_ERROR;
     }
 
     // shift process depending on if the input character is uppercase or lowercase
@@ -93,10 +100,10 @@ int shift_letter( char character_to_shift, char *p_result_character )
     else
     {
         *p_result_character = '~';
-        return -1;
+        return GENERIC_ERROR;
     }
 
-    return 0;
+    return RETURN_OK;
 }
 
 /**
@@ -105,8 +112,8 @@ int shift_letter( char character_to_shift, char *p_result_character )
   * @param [out] p_out_buffer  Pointer onto output buffer
   * @param [out] p_offset      Pointer onto offset value to set
   * @return An error value :<br>
-  *         - 0 if OK <br>
-  *         - (-1) if failure
+  *         - RETURN_OK (0) if OK <br>
+  *         - GENERIC_ERROR (-1) if failure
   *
   * @note The translation of a vowel will not always give 2 consonants but is likely to output one consonant and
   *       one vowel from time to time.
@@ -149,7 +156,7 @@ int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, unsign
     else
     {
         // failure case... exit with error...
-        return -1;
+        return GENERIC_ERROR;
     }
 
     // determine value of lower_half
@@ -160,7 +167,7 @@ int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, unsign
     *(p_out_buffer + 1) = (unsigned char)( 0x40U bitor lower_half );
     *p_offset += 2; // update offset value
 
-    return 0;
+    return RETURN_OK;
 }
 
 /**
@@ -169,8 +176,8 @@ int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, unsign
   * @param [out] p_out_buffer  Pointer onto output buffer
   * @param [out] p_offset      Pointer onto offset value to set
   * @return An error value :<br>
-  *         - 0 if OK <br>
-  *         - (-1) if failure
+  *         - RETURN_OK (0) if OK <br>
+  *         - GENERIC_ERROR (-1) if failure
   */
 int calculate_consonant_translation( char consonant, unsigned char *p_out_buffer, unsigned int *p_offset )
 {
@@ -207,7 +214,7 @@ int calculate_consonant_translation( char consonant, unsigned char *p_out_buffer
     else
     {
         // failure case... exit with error...
-        return -1;
+        return GENERIC_ERROR;
     }
 
     // determine value of lower_half
@@ -219,7 +226,7 @@ int calculate_consonant_translation( char consonant, unsigned char *p_out_buffer
     *(p_out_buffer + 1) = (unsigned char)( 0x60U bitor lower_half );
     *p_offset += 2; // update offset value
 
-    return 0;
+    return RETURN_OK;
 
 }
 
@@ -239,7 +246,7 @@ bool is_a_vowel( char letter_to_analyse )
       * Since 'vowels' table only contains lowercase letters, and we need to handle uppercase
       * we will shift the 'letter_to_analyse' value and use it in the analyse itself afterward
       */
-    if( shift_letter( letter_to_analyse, &shifted_letter_to_analyse) != 0 )
+    if( RETURN_OK != shift_letter( letter_to_analyse, &shifted_letter_to_analyse) )
     {
         /**
           * Error case handling :<br>
@@ -275,8 +282,8 @@ bool is_a_vowel( char letter_to_analyse )
   * @param [out] output           Buffer in which we would write the resulting string
   * @param [out] p_output_length  Pointer to length of output string
   * @return An int value :<br>
-  *           - 0 if everything is OK <br>
-  *           - (-1) if process ends in error
+  *           - RETURN_OK (0) if everything is OK <br>
+  *           - GENERIC_ERROR (-1) if process ends in error
   */
 int translate_into_obscure( char *input, unsigned int input_length, unsigned char *output, unsigned int *p_output_length )
 {
@@ -292,7 +299,7 @@ int translate_into_obscure( char *input, unsigned int input_length, unsigned cha
           * If 'output' buffer is 'NULL' we might get in trouble trying to set values to a random memory location <br>
           *   => We would better exit the function as soon as  possible with an error code to inform the caller
           */
-        return -1;
+        return GENERIC_ERROR;
     }
 
     // check input
@@ -325,7 +332,7 @@ int translate_into_obscure( char *input, unsigned int input_length, unsigned cha
   * @brief Main program function
   * @param [in] argC  Argument number
   * @param [in] argV  Pointer onto input argument strings
-  * @return 0 in case of successful execution
+  * @return RETURN_OK (0) in case of successful execution
   */
 int main( int argC, char **argV )
 {
@@ -365,9 +372,9 @@ int main( int argC, char **argV )
         //! @todo Add a check on return code for 'translate_into_obscure' function (and take action depending on it) 
         res = translate_into_obscure( argV[ 1 ], strlen(argV[ 1 ]), (unsigned char *)output_buff, &output_useful_length );
 
-        if( res == 0 )
+        if( RETURN_OK == res )
         {
-            printf( output_buff );
+            printf( "%s\n", output_buff );
         }
 
         //! @todo Remove following lines after debug
@@ -390,11 +397,17 @@ int main( int argC, char **argV )
         // Prompt user for input string
         printf( ":> " );
         scanf( "%s", input_buff );
-        translate_into_obscure( input_buff, strlen(input_buff), (unsigned char *)output_buff, &output_useful_length );
+        // Translate input
+        res = translate_into_obscure( input_buff, strlen(input_buff), (unsigned char *)output_buff, &output_useful_length );
+        // Print output if no error in the obfuscation process
+        if( RETURN_OK == res )
+        {
+            printf( "%s\n", output_buff );
+        }
 
         // Prompt user for continuation or exit
         printf( "Exit [yes/no] ? " );
-        memset( output_buff, 0x00, sizeof(output_buff) );
+        memset( output_buff, 0x00, sizeof(output_buff) );   // reset output buffer used for user input
         scanf( "%s", (char *)output_buff );
         if( strncmp( (const char *)output_buff, "yes", strlen("yes") ) == 0 )
         {
@@ -406,5 +419,5 @@ int main( int argC, char **argV )
 exit_program:
     // print linebreak to have next shell command on a new line
     printf("\n");
-    return 0;
+    return RETURN_OK;
 }
