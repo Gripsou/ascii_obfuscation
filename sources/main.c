@@ -21,12 +21,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <iso646.h>  // allows to use 'and', 'or', 'xor' keywords instead of '&&', '||' symbols
-#ifdef __unix__
-    #include <unistd.h>
-#else
-    #include <windows.h>
-#endif // __unix__
+#include <iso646.h>  //!< allows to use `and`, `or`, `xor` keywords instead of `&&`, `||` symbols
+//! @remark following lines are commented out on purpose. They are not mandatory if `pause()` or `system()` are not used.
+//#ifdef __unix__
+//    #include <unistd.h>
+//#else
+//    #include <windows.h>
+//#endif // __unix__
 
 // ============================================================================
 // ======================== MACRO & CONSTANTS =================================
@@ -385,8 +386,8 @@ int main( int argC, char **argV )
 //        system("PAUSE");
 //#endif
 
-        // Jump to end of program
-        goto exit_program;  //! @todo remove 'goto' ASAP => goes against coding style
+        // End of program
+        return RETURN_OK;
     }
 
 	// Print program title
@@ -415,9 +416,6 @@ int main( int argC, char **argV )
         }
     }
 
-    //! @todo rework following lines : coding style chosen is not to have 1 exit point per function & forbids 'goto' usage
-exit_program:
-    // print linebreak to have next shell command on a new line
-    printf("\n");
+    // End of program
     return RETURN_OK;
 }
