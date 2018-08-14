@@ -22,12 +22,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <iso646.h>  //!< allows to use `and`, `or`, `xor` keywords instead of `&&`, `||` symbols
-//! @remark following lines are commented out on purpose. They are not mandatory if `pause()` or `system()` are not used.
-//#ifdef __unix__
-//    #include <unistd.h>
-//#else
-//    #include <windows.h>
-//#endif // __unix__
 
 // ============================================================================
 // ======================== MACRO & CONSTANTS =================================
@@ -285,6 +279,11 @@ bool is_a_vowel( char letter_to_analyse )
   * @return An int value :<br>
   *           - RETURN_OK (0) if everything is OK <br>
   *           - GENERIC_ERROR (-1) if process ends in error
+  *  
+  * @note Typically the translation of 'abcdefghijklmnopqrstuvwxyz' will be
+  *       'FAfbfcfdFEfffgfhFIfjfkflfmfnFOg`gagbgcgdGEgfggghGIgj' which is not that obscure.
+  *       Using a random value between 0 and 7 that gives an actual ASCII character might
+  *       be considered for a solution
   */
 int translate_into_obscure( char *input, unsigned int input_length, unsigned char *output, unsigned int *p_output_length )
 {
@@ -377,14 +376,6 @@ int main( int argC, char **argV )
         {
             printf( "%s\n", output_buff );
         }
-
-        //! @todo Remove following lines after debug
-        //! @remark Lines are left as commented code to allow multiple use cases, depending on IDE used for development
-//#ifdef __unix__
-//        pause();
-//#else
-//        system("PAUSE");
-//#endif
 
         // End of program
         return RETURN_OK;
