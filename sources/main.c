@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <math.h>
 #include <iso646.h>  //!< allows to use `and`, `or`, `xor` keywords instead of `&&`, `||` symbols
 
 // ============================================================================
@@ -47,216 +48,51 @@ const char title_str[] = \
 // ======================== PROTOTYPES ========================================
 // ============================================================================
 
-bool is_a_vowel( char letter_to_analyse );
 int shift_letter( char character_to_shift, char *p_result_character );
-int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, unsigned int *p_offset );
-int calculate_consonant_translation( char consonant, unsigned char *p_out_buffer, unsigned int *p_offset );
 
 // ============================================================================
 // ======================== FUNCTIONS =========================================
 // ============================================================================
 
 /**
-  * @brief Shift letters from upper case to lower case or from lower case to upper case
-  * @param [in] character_to_shift   Character to shift
-  * @param [out] p_result_character  Pointer onto resulting character
-  * @return An int error code value :<br>
-  *         - RETURN_OK (0) if OK <br>
-  *         - GENERIC_ERROR (-1) if failure
+  * @brief Make 2 randomized letters out of 1 letter input
+  * @param [in] input    Input character to be randomized
+  * @param [out] output  Buffer in which we would write the resulting 2 characters
+  * @param [out] offset  Offset of output characters in output buffer
+  * @return An int value :<br>
+  *           - RETURN_OK (0) if everything is OK <br>
+  *           - GENERIC_ERROR (-1) if process ends in error
   */
-int shift_letter( char character_to_shift, char *p_result_character )
+int randomize_value( char input, char *output, unsigned int *offset )
 {
-    // check that there is a value to set
-    if( NULL == p_result_character )
-    {
-        return GENERIC_ERROR;
-    }
+    unsigned char upper_half   = 0xFF;
+    unsigned char lower_half   = 0xFF;
+    unsigned char working_half = 0x00;
 
-    // shift process depending on if the input character is uppercase or lowercase
-    if( ( character_to_shift >= 'a' ) and ( character_to_shift <= 'z' ) )
-    {
-        *p_result_character = (char)(character_to_shift - UPPERCASE_LOWERCASE_SHIFT);
-    }
-    else if( ( character_to_shift >= 'A' ) and ( character_to_shift <= 'Z' ) )
-    {
-        *p_result_character = (char)(character_to_shift + UPPERCASE_LOWERCASE_SHIFT);
-    }
-    else
-    {
-        *p_result_character = '~';
-        return GENERIC_ERROR;
-    }
+    // Split input in two halves
+    upper_half = (unsigned char)(input bitand 0xF0);
+    lower_half = (unsigned char)(input bitand 0x0F);
+
+    //! @todo We have to revise the following lines to ensure they do what they are supposed to
+    // Create new character using upper_half
+
+    // First : setup random value
+    working_half = (unsigned char)(rand() % 0x7F);  // 0x7F is the usual limit of the standard ASCII table
+    // Second : rearrange values to create first character
+    working_half = (unsigned char)(working_half bitand 0x0F);
+    output[ *offset ] = upper_half bitor working_half;
+    (*offset)++; // increment offset
+
+    // Create another new character using lower_half
+
+    // First : regenerate random number
+    working_half = (unsigned char)(rand() % 0x7F);
+    // Second : arrange values to create second output character
+    working_half = (unsigned char)(working_half bitand 0xF0);
+    output[ *offset ] = lower_half bitor working_half;
+    (*offset)++; // increment offset
 
     return RETURN_OK;
-}
-
-/**
-  * @brief Calculate the translation of a vowel into consonant
-  * @param [in] vowel          Vowel character to translate into consonant character
-  * @param [out] p_out_buffer  Pointer onto output buffer
-  * @param [out] p_offset      Pointer onto offset value to set
-  * @return An error value :<br>
-  *         - RETURN_OK (0) if OK <br>
-  *         - GENERIC_ERROR (-1) if failure
-  *
-  * @note The translation of a vowel will not always give 2 consonants but is likely to output one consonant and
-  *       one vowel from time to time.
-  *       It has been observed that the translation from 'i' is 'FI' i.e. second character is a vowel.
-  *       It might be of interest to translate vowels only into consonants i.e. 'i' giving 'FJ' for example
-  *       (and maybe have consonants only give consonants)
-  */
-int calculate_vowel_translation( char vowel, unsigned char *p_out_buffer, unsigned int *p_offset )
-{
-    // declare and init variables
-    //! @remark Clang-Tidy complains about '#' init value being not used
-    //! @todo look for a workaround for this case
-    unsigned char upper_half = '#';
-    unsigned char lower_half = '#';
-    /**
-      * @note ```unsigned_vowel``` is used instead of ```vowel``` to avoid Clang-Tidy warnings
-      * about wrong implicit casts or value size, during value manipulation and bitwise operations
-      */
-    unsigned char unsigned_vowel = (unsigned char)vowel;
-
-    /**
-      * Determine value of upper_half
-      * @note operation could be written as follow
-      * ```c
-      *   upper_half = (unsigned char)( ( vowel >> 4U ) & 0x0FU );
-      * ```
-      * but it triggers a Clang-Tidy warning, which we want to avoid at the moment
-      */
-    upper_half =  unsigned_vowel >> 4U;
-    upper_half &=  0x0FU;
-    /*
-     * Lower case letter values should be between 0x61 and 0x7A
-     * => upper half byte can only be 0x6 or 0x7
-     */
-    if( ( ( upper_half bitand 0x06U ) != 0 ) or
-        ( ( upper_half bitand 0x07U ) != 0 )  )
-    {
-        // success => nothing to do
-    }
-    else
-    {
-        // failure case... exit with error...
-        return GENERIC_ERROR;
-    }
-
-    // determine value of lower_half
-    lower_half = (unsigned char)( unsigned_vowel bitand 0x0FU );
-
-    // set the values of translation into output buffer
-    *p_out_buffer = (unsigned char)( 0x40U bitor upper_half );
-    *(p_out_buffer + 1) = (unsigned char)( 0x40U bitor lower_half );
-    *p_offset += 2; // update offset value
-
-    return RETURN_OK;
-}
-
-/**
-  * @brief Calculate the translation of a consonant into another one
-  * @param [in] consonant      Vowel consonant character to translate
-  * @param [out] p_out_buffer  Pointer onto output buffer
-  * @param [out] p_offset      Pointer onto offset value to set
-  * @return An error value :<br>
-  *         - RETURN_OK (0) if OK <br>
-  *         - GENERIC_ERROR (-1) if failure
-  */
-int calculate_consonant_translation( char consonant, unsigned char *p_out_buffer, unsigned int *p_offset )
-{
-    // declare and init variables
-    //! @remark Clang-Tidy complains about '#' init value being not used
-    //! @todo look for a workaround for this case
-    unsigned char upper_half = '#';
-    unsigned char lower_half = '#';
-    /**
-      * @note ```unsigned_consonant``` is used instead of ```consonant``` to avoid Clang-Tidy warnings
-      * about wrong implicit casts or value size, during value manipulation and bitwise operations
-      */
-    unsigned char unsigned_consonant = (unsigned char)consonant;
-
-    /**
-      * Determine value of upper_half
-      * @note operation could be written as follow
-      * ```c
-      *   upper_half = (unsigned char)( ( consonant >> 4U ) & 0x0FU );
-      * ```
-      * but it triggers a Clang-Tidy warning, which we want to avoid at the moment
-      */
-    upper_half =  unsigned_consonant >> 4U;
-    upper_half &=  0x0FU;
-    /*
-     * Lower case letter values should be between 0x61 and 0x7A
-     * => upper half byte can only be 0x6 or 0x7
-     */
-    if( ( ( upper_half bitand 0x06U ) != 0 ) or
-        ( ( upper_half bitand 0x07U ) != 0 )  )
-    {
-        // success => nothing to do
-    }
-    else
-    {
-        // failure case... exit with error...
-        return GENERIC_ERROR;
-    }
-
-    // determine value of lower_half
-    lower_half = (unsigned char)( unsigned_consonant bitand 0x0FU );
-
-    // set the values of translation into output buffer
-    //! @note an idea that came while writting the code : if resulting char is a vowel, why not shifting it in addition ?
-    *p_out_buffer = (unsigned char)( 0x60U bitor upper_half );
-    *(p_out_buffer + 1) = (unsigned char)( 0x60U bitor lower_half );
-    *p_offset += 2; // update offset value
-
-    return RETURN_OK;
-
-}
-
-/**
-  * @brief Tells if the character given in argument is a vowel or not
-  * @param [in] letter_to_analyse  Character that we will tell if its a vowel or not
-  * @return A boolean value :<br>
-  *         - true  : letter_to_analyse is a vowel <br>
-  *         - false : letter_to_analyse is a consonant
-  */
-bool is_a_vowel( char letter_to_analyse )
-{
-    unsigned int idx = 0;
-    char shifted_letter_to_analyse = 0;
-
-    /**
-      * Since 'vowels' table only contains lowercase letters, and we need to handle uppercase
-      * we will shift the 'letter_to_analyse' value and use it in the analyse itself afterward
-      */
-    if( RETURN_OK != shift_letter( letter_to_analyse, &shifted_letter_to_analyse) )
-    {
-        /**
-          * Error case handling :<br>
-          * 'shift_letter' fail means that 'letter_to_analyse' is not within the alphabet
-          * (see 'shift_letter' return codes)
-          */
-        return false;
-    }
-
-    //! Parse the vowel table within a loop
-    for( idx = 0 ; idx < sizeof(vowels) ; idx++ )
-    {
-        //! Check that letter_to_analyse is value is the same as one in 'vowels[]' table
-        if( ( vowels[ idx ] == letter_to_analyse )         or
-            ( vowels[ idx ] == shifted_letter_to_analyse )  )   // uppercase letter handling
-        {
-            //! Comparison success => vowel found => exit with true
-            return true;
-        }
-    }
-
-    /*
-     * if we reach this point, then all comparisons failed and letter is not a vowel
-     * => exit with false
-     */
-    return false;
 }
 
 /**
@@ -268,11 +104,6 @@ bool is_a_vowel( char letter_to_analyse )
   * @return An int value :<br>
   *           - RETURN_OK (0) if everything is OK <br>
   *           - GENERIC_ERROR (-1) if process ends in error
-  *  
-  * @note Typically the translation of 'abcdefghijklmnopqrstuvwxyz' will be
-  *       'FAfbfcfdFEfffgfhFIfjfkflfmfnFOg`gagbgcgdGEgfggghGIgj' which is not that obscure.
-  *       Using a random value between 0 and 7 that gives an actual ASCII character might
-  *       be considered for a solution
   */
 int translate_into_obscure( char *input, unsigned int input_length, unsigned char *output, unsigned int *p_output_length )
 {
@@ -302,13 +133,11 @@ int translate_into_obscure( char *input, unsigned int input_length, unsigned cha
     // translation loop
     for( idx = 0 ; ( idx < input_length ) and ( input[ idx ] != '\0' ) ; idx++ )
     {
-        if( true == is_a_vowel( input[ idx ] ) ) // check if letter is a vowel
+        retval = randomize_value( input[ idx ], (char *)( output + offset ), &offset );
+        if( RETURN_OK != retval )
         {
-            retval = calculate_vowel_translation( input[ idx ], &output[ offset ], &offset );
-        }
-        else
-        {
-            retval = calculate_consonant_translation( input[ idx ], &output[ offset ], &offset );
+            // abort loop, followed by update and exit
+            break;
         }
     }
 
