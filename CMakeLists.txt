@@ -3,9 +3,19 @@ project(ascii_obfuscation C)
 
 set(CMAKE_C_STANDARD 11)
 
-include_directories(sources)
+include_directories(sources
+        sources/Unity/src)
+
+file( GLOB_RECURSE source_files
+      sources/deprecated_functions.c
+      sources/deprecated_functions.h)
+file( GLOB_RECURSE test_files "sources/Unity/src/*.c" )
 
 add_executable(ascii_obfuscation
-        sources/deprecated_functions.c
-        sources/deprecated_functions.h
+        ${source_files}
         sources/main.c)
+
+add_executable(unit_tests
+        sources/functions.c
+        ${test_files}
+        sources/unit_tests.c)
