@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['main',['main',['../main_8c.html#a58d1da195babd0dc18b88b3c872f1513',1,'main.c']]]
+  ['randomize_5fvalue',['randomize_value',['../functions_8c.html#afc333580734706115551ece2f9373d80',1,'randomize_value(char input, char *output, unsigned int *offset):&#160;functions.c'],['../functions_8h.html#afc333580734706115551ece2f9373d80',1,'randomize_value(char input, char *output, unsigned int *offset):&#160;functions.c']]]
 ];
