@@ -1,16 +1,21 @@
-//
-// Created by vince on 08/02/2020.
-//
+/**
+  * @title functions.h
+  * @brief function definition for `ascii_obfuscation`
+  * @note Created by vince on 08/02/2020.
+  */
 
 #ifndef ASCII_OBFUSCATION_FUNCTIONS_H
 #define ASCII_OBFUSCATION_FUNCTIONS_H
 
-// Define error codes to avoid using magic numbers
-enum error_codes
-{
-    GENERIC_ERROR   = -1,
-    RETURN_OK       = 0,
-};
+// ============================================================================
+// ======================== INCLUDES ==========================================
+// ============================================================================
+
+    // None at the moment
+
+// ============================================================================
+// ======================== PROTOTYPES ========================================
+// ============================================================================
 
 /**
   * @brief Make 2 randomized letters out of 1 letter input
