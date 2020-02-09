@@ -1,6 +1,8 @@
-//
-// Created by vince on 09/02/2020.
-//
+/**
+  * @title main.h
+  * @brief `ascii_obfuscation` program header file for specific definition share
+  * @note Created by vince on 09/02/2020.
+  */
 
 #ifndef ASCII_OBFUSCATION_MAIN_H
 #define ASCII_OBFUSCATION_MAIN_H
@@ -29,24 +31,15 @@
 //! Define custom/personal error codes to avoid using magic numbers
 enum error_codes
 {
-    GENERIC_ERROR   = -1,
-    RETURN_OK       = 0,
+    GENERIC_ERROR   = -1,   //!< General purpose error ; no particular details to share
+    RETURN_OK       = 0,    //!< All good !
 };
-
-typedef struct __message
-{
-    const char *string;
-#ifdef __DEBUG__
-    void (*init)( const char* init_string );
-#endif // __DEBUG__
-    const char* (*get)( struct __message this );
-} message_t;
 
 // ============================================================================
 // ======================== PROTOTYPES ========================================
 // ============================================================================
 
-// None at the moment
+    // None at the moment
 
 // ============================================================================
 // ======================== EXTERN VARIABLES & CONSTANTS ======================
@@ -56,9 +49,6 @@ typedef struct __message
 extern const char vowels[ 6 ];
 extern const char consonants[ 20 ];
 // test message string for character manipulation
-#ifdef __DEBUG__
-extern message_t message;
-#endif // __DEBUG__
 extern const char message_str[ 0xFF ];
 
 #endif //ASCII_OBFUSCATION_MAIN_H

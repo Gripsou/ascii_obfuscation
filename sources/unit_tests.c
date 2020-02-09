@@ -49,12 +49,12 @@ void TEST_randomize_value(void)
     TEST_ASSERT_EQUAL( 4, offset );
 }
 
-#ifdef __WIP__
+#ifdef __NEXT_STEP__
 void TEST_translate_into_obscure(void)
 {
     TEST_ASSERT_EQUAL_HEX8(80, translate_into_obscure() );
 }
-#endif // __WIP__
+#endif // __NEXT_STEP__
 
 // ============================================================================
 // ======================== TEST RUNNER (MAIN) ================================
@@ -62,11 +62,16 @@ void TEST_translate_into_obscure(void)
 
 int main(void)
 {
-    UNITY_BEGIN();
-    RUN_TEST(TEST_randomize_value);
-#ifdef __WIP__
+    // Prepare for unit tests
+    UNITY_BEGIN( );
+
+    // Run actual unit tests
+    RUN_TEST( TEST_randomize_value );
+#ifdef __NEXT_STEP__
     RUN_TEST(TEST_translate_into_obscure);
-#endif // __WIP__
-    return UNITY_END();
+#endif // __NEXT_STEP__
+
+    // End unit tests
+    return UNITY_END( );
 }
 

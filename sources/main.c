@@ -16,18 +16,6 @@
 // ======================== MACRO & CONSTANTS =================================
 // ============================================================================
 
-#ifdef __ROLLBACK__
-//! vowels table
-const char vowels[ 6 ] = { 'a', 'e', 'i', 'o', 'u', 'y' };
-//! Consonants table
-const char consonants[ 20 ] = { 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
-                                'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w',
-                                'x', 'z' };
-//! Default test message string for character manipulation
-const char message_str[ 0xFF ] = \
-        "I think you know my point about inline if operations : it only obfuscates the code.\0";
-#endif // __ROLLBACK__
-
 //! Title string to ebe displayed in console
 const char title_str[] = \
     "                                 _/  _/                _/            _/_/                                            _/      _/                  \n"
@@ -47,23 +35,7 @@ const char title_str[] = \
 // ======================== FUNCTIONS =========================================
 // ============================================================================
 
-#ifdef __DEBUG__
-void init_message( message_t this )
-{
-    this.message_string = message_str;
-}
-
-const char* get_message( message_t this )
-{
-    return this.string;
-}
-
-message_t message = \
-{
-    .string = message_str,
-    .get = get_message,
-};
-#endif // __DEBUG__
+    // None at the moment
 
 // ============================================================================
 // ======================== PROGRAM ENTRY POINT (MAIN) ========================
